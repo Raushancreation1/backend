@@ -1,7 +1,7 @@
 // Importing necessary modules and packages
 const path = require("path");
 require("dotenv").config({
-  override: false,
+	override: false,
 });
 const express = require("express");
 const app = express();
@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 5000;
 
 // Connecting to database
 database.connect();
- 
+
 // Middlewares
 app.use(express.json());
 app.use(cookieParser());
@@ -32,46 +32,47 @@ app.use(cookieParser());
 // CORS Configuration
 const normalizeOrigin = (o) => (o || "").trim().replace(/\/$/, "");
 const allowedOrigins = (
-  process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(",").map(normalizeOrigin).filter(Boolean)
-    : [
-        "https://rccodingallinone.onrender.com"
-      ]
+	process.env.CORS_ORIGIN
+		? process.env.CORS_ORIGIN.split(",").map(normalizeOrigin).filter(Boolean)
+		: [
+			"https://rccodingallinone.onrender.com",
+			"https://study-notion-pro-seven.vercel.app"
+		]
 ).map(normalizeOrigin);
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    const normalized = normalizeOrigin(origin);
-    
-    // Check if origin is in allowed list
-    if (allowedOrigins.includes(normalized)) {
-      return callback(null, true);
-    }
-    
-    // Log for debugging
-    console.log(`CORS blocked origin: ${origin} (normalized: ${normalized})`);
-    console.log(`Allowed origins: ${allowedOrigins.join(", ")}`);
-    
-    // Reject unauthorized origins
-    return callback(new Error("Not allowed by CORS"));
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: [
-    "Content-Type", 
-    "Authorization", 
-    "X-Requested-With",
-    "Accept",
-    "Origin",
-    "Access-Control-Request-Method",
-    "Access-Control-Request-Headers"
-  ],
-  exposedHeaders: ["Content-Range", "X-Content-Range"],
-  optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
-  preflightContinue: false,
+	origin: function (origin, callback) {
+		// Allow requests with no origin (like mobile apps or curl requests)
+		if (!origin) return callback(null, true);
+
+		const normalized = normalizeOrigin(origin);
+
+		// Check if origin is in allowed list
+		if (allowedOrigins.includes(normalized)) {
+			return callback(null, true);
+		}
+
+		// Log for debugging
+		console.log(`CORS blocked origin: ${origin} (normalized: ${normalized})`);
+		console.log(`Allowed origins: ${allowedOrigins.join(", ")}`);
+
+		// Reject unauthorized origins
+		return callback(new Error("Not allowed by CORS"));
+	},
+	credentials: true,
+	methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+	allowedHeaders: [
+		"Content-Type",
+		"Authorization",
+		"X-Requested-With",
+		"Accept",
+		"Origin",
+		"Access-Control-Request-Method",
+		"Access-Control-Request-Headers"
+	],
+	exposedHeaders: ["Content-Range", "X-Content-Range"],
+	optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
+	preflightContinue: false,
 };
 
 // Apply CORS middleware
@@ -115,7 +116,7 @@ app.use((err, req, res, next) => {
 			res.header("Access-Control-Allow-Credentials", "true");
 		}
 	}
-	
+
 	// Handle CORS errors
 	if (err.message === "Not allowed by CORS") {
 		return res.status(403).json({
@@ -124,7 +125,7 @@ app.use((err, req, res, next) => {
 			origin: origin,
 		});
 	}
-	
+
 	// Handle other errors
 	console.error("Error:", err);
 	res.status(err.status || 500).json({
