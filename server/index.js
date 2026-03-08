@@ -37,6 +37,7 @@ const allowedOrigins = (
 		: [
 			"https://backend-ol9i.onrender.com",
 			"https://study-notion-pro-seven.vercel.app",
+			"https://study-notion-pro-beta.vercel.app",
 			"http://localhost:3000"
 		]
 ).map(normalizeOrigin);

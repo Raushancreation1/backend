@@ -25,7 +25,7 @@ exports.resetPasswordToken = async (req, res) => {
 		);
 		console.log("DETAILS", updatedDetails);
 
-		const url = `https://rccodingallinone.onrender.com/update-password/${token}`;
+		const url = `https://backend-ol9i.onrender.com/update-password/${token}`;
 
 		await mailSender(
 			email,

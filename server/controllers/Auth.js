@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken")
 const otpGenerator = require("otp-generator")
 const mailSender = require("../utils/mailSender")
 const { passwordUpdated } = require("../mail/templates/passwordUpdate")
+const otpTemplate = require("../mail/templates/emailVerificationTemplate")
 const Profile = require("../models/Profile")
 require("dotenv").config()
 
@@ -210,22 +211,31 @@ exports.sendotp = async (req, res) => {
       lowerCaseAlphabets: false,
       specialChars: false,
     })
-    const result = await OTP.findOne({ otp: otp })
-    console.log("Result is Generate OTP Func")
-    console.log("OTP", otp)
-    console.log("Result", result)
+    // Ensure OTP is unique
+    let result = await OTP.findOne({ otp: otp })
     while (result) {
       otp = otpGenerator.generate(6, {
         upperCaseAlphabets: false,
+        lowerCaseAlphabets: false,
+        specialChars: false,
       })
+      result = await OTP.findOne({ otp: otp })
     }
+    console.log("OTP Generated:", otp)
     const otpPayload = { email, otp }
     const otpBody = await OTP.create(otpPayload)
     console.log("OTP Body", otpBody)
+
+    // Send OTP email to user
+    await mailSender(
+      email,
+      "Verification Email - StudyNotion",
+      otpTemplate(otp)
+    )
+
     res.status(200).json({
       success: true,
       message: `OTP Sent Successfully`,
-      otp,
     })
   } catch (error) {
     console.log(error.message)
